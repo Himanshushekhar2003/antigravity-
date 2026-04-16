@@ -76,6 +76,35 @@ app.post('/complaints', (req, res) => {
   });
 });
 
+const { getDistanceFromLatLonInKm } = require('./geo');
+const { calculateOrderPricing } = require('./pricing');
+
+// Geo Pricing Endpoint (Integrating Phase 2 and 5)
+app.post('/api/pricing', (req, res) => {
+  const { userLat, userLng, shopLat, shopLng, orderTotal } = req.body;
+
+  const lat1 = parseFloat(userLat);
+  const lon1 = parseFloat(userLng);
+  const lat2 = parseFloat(shopLat);
+  const lon2 = parseFloat(shopLng);
+
+  if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
+    return res.status(400).json({ error: 'Missing or Invalid geographic coordinates' });
+  }
+
+  const distance = getDistanceFromLatLonInKm(lat2, lon2, lat1, lon1);
+  const pricingData = calculateOrderPricing(distance, orderTotal || 0);
+
+  if (!pricingData.isValid) {
+    return res.status(400).json({ error: pricingData.error });
+  }
+
+  return res.status(200).json({
+    distance_km: distance,
+    pricing: pricingData
+  });
+});
+
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error('[Error:', err.stack);
