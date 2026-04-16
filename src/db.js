@@ -2,6 +2,8 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('test.db');
 
 db.serialize(() => {
+  db.run('PRAGMA foreign_keys = ON;');
+  
   // Orders Table
   db.run(`CREATE TABLE IF NOT EXISTS orders (
     id TEXT PRIMARY KEY,

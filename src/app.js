@@ -8,6 +8,17 @@ app.use(express.json());
 app.post('/complaints', (req, res) => {
   const { order_id, type, description, images } = req.body;
 
+  // Validation: Required Type ENUM
+  const validTypes = ['WRONG_ITEM', 'MISSING_ITEM', 'DAMAGED'];
+  if (!validTypes.includes(type)) {
+    return res.status(400).json({ error: 'Invalid complaint type' });
+  }
+
+  // Validation: Description bounds
+  if (description && description.length > 500) {
+    return res.status(400).json({ error: 'Description exceeds length limit' });
+  }
+
   // Rule 2: Proof Required (Minimum 1 image)
   if (!images || images.length === 0) {
     return res.status(400).json({ error: 'Minimum 1 image required' });
@@ -63,6 +74,12 @@ app.post('/complaints', (req, res) => {
       }
     );
   });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error('[Error:', err.stack);
+  res.status(500).json({ error: 'Internal Server Error' });
 });
 
 module.exports = app;
