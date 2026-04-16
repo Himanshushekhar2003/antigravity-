@@ -1,0 +1,17 @@
+# .coderabbit.yaml
+
+language: "en-US"
+early_access: false
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: true
+  review_status: true
+  collapse_walkthrough: false
+  custom_instructions: |
+    - Review for structural consistency with Android/iOS/Windows platforms as outlined strictly in PRD.md.
+    - Check if performance optimization is considered for rendering rich media and offline note taking logic.
+    - Validate alignment with GSD .planning documents structure.
+chat:
+  auto_reply: true
